@@ -32,6 +32,8 @@ class Client(base, Model):
 
     def __repr__(self):
         return f'<tg_id={self.tg_id} \
+        id={self.id} \
+        username={self.username} \
         is_approved={self.is_approved} \
         is_declined={self.is_declined} \
         is_admin={self.is_admin}'
@@ -43,7 +45,7 @@ def get_client_by_id(client_id: Integer):
     return session.query(Client).filter(Client.id == client_id).first()
 def get_client_by_username(username: str):
     return session.query(Client).filter(Client.username == username).first()
-def save(tg_id: int, username: str):
+def save_new_client(tg_id: int, username: str):
     client = Client(tg_id, username)
     client.commit()
 
