@@ -1,4 +1,5 @@
 from loggerconfig import getLogger
+
 logger = getLogger(__name__)
 logger.info("Starting bot")
 
@@ -24,6 +25,7 @@ time.sleep(0.1)
 logger.debug('remove_webhook')
 app = flask.Flask(__name__)
 
+
 @app.route('/', methods=['GET', 'HEAD'])
 def index():
     return ''
@@ -40,9 +42,12 @@ def webhook():
     else:
         flask.abort(403)
 
+
 logger.debug("Bot inited.")
 
+import bot.admin_commands as admin_commands
 import bot.commands as commands
+
 
 if int(botconfig.use_webhook):
     bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
