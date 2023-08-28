@@ -5,7 +5,7 @@ import os
 from bot.bot import bot
 import bot.answers as answers
 from models.chat import sync_chat
-from models.client import save, get_client_by_id, get_client_by_username, get_wait_list
+from models.client import save, get_client_by_tg_id, get_client_by_id, get_client_by_username, get_wait_list
 
 logger.info("Starting bot ")
 
@@ -14,7 +14,7 @@ logger.info("Starting bot ")
 def send_welcome(message):
     logger.info(f'{message.from_user.username} sent {message.text}')
     if message.chat.type == 'private':
-        client = get_client_by_id(message.from_user.id)
+        client = get_client_by_tg_id(message.from_user.id)
         if client is None:
             save(message.from_user.id, message.from_user.username)
             bot.send_message(message.chat.id, "Your request has been sent to the admin, wait for the approvement")
@@ -32,7 +32,7 @@ def send_welcome(message):
                                      "approves your request")
 def admin_only(func):
     def wrapper(message):
-        client = get_client_by_id(message.from_user.id)
+        client = get_client_by_tg_id(message.from_user.id)
         if client is None or (not client.is_admin):
             bot.send_message(message.chat.id, "You do not have admin rights to do it!")
             return
@@ -47,7 +47,7 @@ def waiting_list(message):
     clients_list = str()
     number = 1
     for client in clients:
-        clients_list += f"{number}. username: @{client.username}, telegram_id: {client.tg_id}\n"
+        clients_list += f"{number}. id: {client.id}, username: @{client.username}, telegram_id: {client.tg_id}\n"
         number += 1
     if clients_list == "":
         clients_list = "There are no clients on the waiting list!"
@@ -56,8 +56,10 @@ def waiting_list(message):
 @bot.message_handler(commands=['approve'])
 def client_approve(message):
     logger.info(f'{message.from_user.username} sent {message.text}')
-    username = message.text.split(' ')[1]
-    client = get_client_by_username(username)
+    identity = message.text.split(' ')[1]
+    client = get_client_by_username(identity)
+    if client is None:
+        client = get_client_by_id(int(identity))
     if client is None:
         bot.send_message(message.chat.id, "This user hasn't been found!")
         return
@@ -100,7 +102,7 @@ def error(message):
 @bot.message_handler(content_types=['text'])
 def receive_password(message):
     if message.text == os.environ.get("PASSWORD"):
-        client = get_client_by_id(message.from_user.id)
+        client = get_client_by_tg_id(message.from_user.id)
         if client is not None:
             client.is_admin = True
             save(client)

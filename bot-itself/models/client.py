@@ -37,8 +37,10 @@ class Client(base, Model):
         is_admin={self.is_admin}'
 
 
+def get_client_by_tg_id(client_tg_id: Integer):
+    return session.query(Client).filter(Client.tg_id == client_tg_id).first()
 def get_client_by_id(client_id: Integer):
-    return session.query(Client).filter(Client.tg_id == client_id).first()
+    return session.query(Client).filter(Client.id == client_id).first()
 def get_client_by_username(username: str):
     return session.query(Client).filter(Client.username == username).first()
 def save(tg_id: int, username: str):
