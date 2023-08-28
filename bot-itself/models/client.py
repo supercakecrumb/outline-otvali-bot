@@ -43,10 +43,10 @@ def get_client_by_tg_id(client_tg_id: Integer):
     return session.query(Client).filter(Client.tg_id == client_tg_id).first()
 
 
-def get_user(identity: str):
-    client = get_client_by_username(identity)
+def get_user(username_or_id: str):
+    client = get_client_by_username(username_or_id)
     if client is None:
-        client = get_client_by_id(identity)
+        client = get_client_by_id(username_or_id)
     return client
 
 
@@ -73,9 +73,12 @@ def decline_client(client: Client):
     client.is_approved = False
     client.is_declined = True
     client.commit()
+
+
 def give_client_admin_rights(client: Client):
     client.is_admin = True
     client.commit()
+
 
 def get_wait_list():
     return session.query(Client).filter_by(is_approved=False, is_declined=False).all()
