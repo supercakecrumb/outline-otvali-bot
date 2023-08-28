@@ -26,8 +26,8 @@ def waiting_list(message):
 @admin_only
 def client_approve(message):
     logger.info(f'{message.from_user.username} sent {message.text}')
-    identity = message.text.split(' ')[1]
-    client = get_user(identity)
+    username_or_id = message.text.split(' ')[1]
+    client = get_user(username_or_id)
     if client is None:
         bot.send_message(message.chat.id, "This user hasn't been found!")
         return
@@ -55,8 +55,8 @@ def client_approve_all(message):
 @admin_only
 def client_decline(message):
     logger.info(f'{message.from_user.username} sent {message.text}')
-    identity = message.text.split(' ')[1]
-    client = get_user(identity)
+    username_or_id = message.text.split(' ')[1]
+    client = get_user(username_or_id)
     if client is None:
         bot.send_message(message.chat.id, "This user hasn't been found!")
         return
