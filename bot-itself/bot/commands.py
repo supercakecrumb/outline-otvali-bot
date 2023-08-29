@@ -1,17 +1,44 @@
-from loggerconfig import getLogger
-logger = getLogger(__name__)
+import os
 
+from bot.utils import receive_password
+from loggerconfig import getLogger
+
+logger = getLogger(__name__)
 from bot.bot import bot
 import bot.answers as answers
 from models.chat import sync_chat
+from models.client import save_new_client, get_client_by_tg_id, give_client_admin_rights
+
 logger.info("Starting bot ")
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    sync_chat(message)
     logger.info(f'{message.from_user.username} sent {message.text}')
-    bot.send_message(message.chat.id, answers.start)
+    if message.chat.type == 'private':
+        client = get_client_by_tg_id(message.from_user.id)
+        if client is None:
+            save_new_client(message.from_user.id, message.from_user.username)
+            bot.send_message(message.chat.id, "Your request has been sent to the admin, wait for the approvement")
+        else:
+            if client.is_declined:
+                bot.send_message(message.chat.id, "Sorry, but your request was declined")
+            else:
+                if client.is_approved:
+                    bot.send_message(message.chat.id,
+                                     "Your request already has been approved. In order to get VPN credentials write "
+                                     "/get_creds")
+                else:
+                    bot.send_message(message.chat.id,
+                                     "You already requested VPN credentials. We will notify you as soon as answers "
+                                     "approves your request")
 
+
+@bot.message_handler(commands=['assign_admin'])
+def assign_admin(message):
+    logger.info(f'{message.from_user.username} sent {message.text}')
+    callback = bot.send_message(message.chat.id, "Please enter the password to receive admin rights")
+    bot.register_next_step_handler(callback, receive_password)
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
@@ -24,4 +51,4 @@ def send_help(message):
 def error(message):
     sync_chat(message)
     logger.info(f'{message.from_user.username} sent {message.text}')
-    bot.reply_to(message, answers.error)    
+    bot.reply_to(message, answers.error)
