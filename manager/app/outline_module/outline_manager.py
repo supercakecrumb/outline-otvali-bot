@@ -1,1 +1,0 @@
-# Outline server communication code
