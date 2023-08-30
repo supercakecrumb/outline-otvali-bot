@@ -1,9 +1,10 @@
 import os
 from loggerconfig import getLogger
 
-logger = getLogger(__name__)
 from bot.bot import bot
 from models.client import get_client_by_tg_id, give_client_admin_rights
+
+logger = getLogger(__name__)
 
 
 def admin_only(func):

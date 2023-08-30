@@ -3,9 +3,8 @@ logger = getLogger(__name__)
 
 from models import session
 
-from datetime import datetime
 
-class Model(): 
+class Model():
     
     def commit(self):
         try:

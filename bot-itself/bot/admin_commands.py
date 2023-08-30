@@ -1,10 +1,10 @@
-
 from bot.utils import admin_only
 from loggerconfig import getLogger
 
-logger = getLogger(__name__)
 from bot.bot import bot
 from models.client import get_user, get_wait_list, approve_client, decline_client
+
+logger = getLogger(__name__)
 
 
 @bot.message_handler(commands=['waiting_list'])
@@ -77,4 +77,3 @@ def client_decline_all(message):
         decline_client(client)
         bot.send_message(client.tg_id, "You have been declined!")
     bot.send_message(message.chat.id, "All clients were declined!")
-
