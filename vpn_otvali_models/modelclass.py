@@ -1,8 +1,4 @@
-from loggerconfig import getLogger
-logger = getLogger(__name__)
-
-from models import session
-
+from vpn-otvali-models import session
 
 class Model():
     

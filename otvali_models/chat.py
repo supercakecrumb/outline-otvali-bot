@@ -1,13 +1,9 @@
-from loggerconfig import getLogger
-logger = getLogger(__name__)
-logger.debug("Chat importing.")
-
 from sqlalchemy import Boolean, Column, Integer, String
-from models import base, session, metadata, engine
-from models.modelclass import Model
-import telebot
+from otvali_models.base import Base, logger
+from otvali_models.basemodel import BaseModel
 
-class Chat(base, Model):
+
+class Chat(Base, BaseModel):
     __tablename__ = 'chat'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -16,7 +12,6 @@ class Chat(base, Model):
     chat_title = Column(String)
     tg_id = Column(Integer, unique=True)
     tg_username = Column(String)
-    
 
     def __init__(self, chat_id: int, is_person: bool, chat_title: str, tg_id: str, tg_username: str):
         self.chat_id = chat_id
@@ -35,18 +30,3 @@ is_person={self.is_person} \
 chat_title={self.chat_title} \
 tg_id={self.tg_id} \
 tg_username={self.tg_username}'
-
-def sync_chat(message: telebot.types.Message):
-    chat = session.query(Chat).filter(Chat.chat_id == message.chat.id).first()
-    if chat == None:
-        is_person = message.chat.type == "private"
-        chat = Chat(
-            chat_id=message.chat.id,
-            is_person=is_person,
-            chat_title=message.chat.title,
-            tg_id=message.from_user.id if is_person else None,
-            tg_username=message.from_user.username if is_person else None
-        )
-        chat.commit()
-
-metadata.create_all(engine)
