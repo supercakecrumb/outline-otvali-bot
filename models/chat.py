@@ -1,10 +1,11 @@
-from loggerconfig import getLogger
-from sqlalchemy import Boolean, Column, Integer, String
-from models import base, metadata, engine
-from models.modelclass import Model
+from models.loggerconfig import getLogger
 
 logger = getLogger(__name__)
 logger.debug("Chat importing.")
+
+from sqlalchemy import Boolean, Column, Integer, String
+from models import base, session, metadata, engine
+from models.modelclass import Model
 
 
 class Chat(base, Model):
@@ -34,5 +35,6 @@ is_person={self.is_person} \
 chat_title={self.chat_title} \
 tg_id={self.tg_id} \
 tg_username={self.tg_username}'
+
 
 metadata.create_all(engine)

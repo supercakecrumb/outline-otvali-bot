@@ -1,6 +1,11 @@
-from models import session
-class Model():
+from models.loggerconfig import getLogger
+logger = getLogger(__name__)
 
+from models import session
+
+
+class Model():
+    
     def commit(self):
         try:
             session.add(self)
