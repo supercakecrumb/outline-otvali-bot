@@ -1,4 +1,4 @@
-from models.loggerconfig import getLogger
+from loggerconfig import getLogger
 logger = getLogger(__name__)
 logger.info("Starting db...")
 
