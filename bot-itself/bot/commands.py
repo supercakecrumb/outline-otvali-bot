@@ -3,12 +3,11 @@ import os
 from bot.utils import receive_password
 from loggerconfig import getLogger
 
-logger = getLogger(__name__)
 from bot.bot import bot
-import bot.answers as answers
 from models.chat import sync_chat
 from models.client import save_new_client, get_client_by_tg_id, give_client_admin_rights
 
+logger = getLogger(__name__)
 logger.info("Starting bot ")
 
 
@@ -40,15 +39,16 @@ def assign_admin(message):
     callback = bot.send_message(message.chat.id, "Please enter the password to receive admin rights")
     bot.register_next_step_handler(callback, receive_password)
 
+
 @bot.message_handler(commands=['help'])
 def send_help(message):
     sync_chat(message)
     logger.info(f'{message.from_user.username} sent {message.text}')
-    bot.send_message(message.chat.id, answers._help)
+    bot.send_message(message.chat.id, "idk sorry")
 
 
 @bot.message_handler(func=lambda m: True)
 def error(message):
     sync_chat(message)
     logger.info(f'{message.from_user.username} sent {message.text}')
-    bot.reply_to(message, answers.error)
+    bot.reply_to(message, "Error!")
