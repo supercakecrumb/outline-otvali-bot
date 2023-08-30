@@ -1,3 +1,0 @@
-[submodule "setup-ipsec-vpn"]
-	path = setup-ipsec-vpn
-	url = https://github.com/hwdsl2/setup-ipsec-vpn.git

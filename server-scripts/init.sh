@@ -1,10 +1,26 @@
 #!/bin/bash
 set -ex
 
+VPN_SERVER_CERT_PATH="/etc/ipsec.d/certs/server.crt"
+
 sudo add-apt-repository ppa:certbot/certbot
 
 sudo apt update -y
 sudo apt upgrade -y
+
+###
+sudo apt install -y python3-pip
+sudo pip install shadowsocks
+###
+
+echo '{
+   "server":"188.166.163.154",
+   "server_port":8388,
+   "local_port":0,
+   "password":"friendofmara",
+   "timeout":600,
+   "method":"aes-256-cfb"
+}' > /etc/shadowsocks.json
 
 sudo apt install strongswan strongswan-pki
 sudo apt install software-properties-common certbot
@@ -12,11 +28,9 @@ sudo apt install software-properties-common certbot
 
 # probably on server
 # export SERVER_DOMAIN=frankfurt-test.vkiel.com
-# export VPN_SERVER_IP="192.168.1.1"
-# export VPN_SERVER_CERT_PATH="/etc/ipsec.d/certs/server.crt"
 
 # Create certificate for server domain
-sudo certbot certonly --standalone -d ${SERVER_DOMAIN}
+sudo certbot certonly --standalone --cert-path ${VPN_SERVER_CERT_PATH} -d ${SERVER_DOMAIN}
 
 # Edit configuration and move it in place
 envsubst < files/ipsec.conf.tpl > files/ipsec.conf
