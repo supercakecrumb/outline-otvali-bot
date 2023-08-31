@@ -3,8 +3,9 @@ from models.db_models import Client, Server, client_server_association
 from sqlalchemy import delete
 from outline_module.outline_vpn.outline_vpn import OutlineVPN
 from models.db_models import init_db
+from config import sql_engine_url
 
-Session = init_db('sqlite:///../app.db')
+Session = init_db(sql_engine_url)
 
 app = Flask(__name__)
 
