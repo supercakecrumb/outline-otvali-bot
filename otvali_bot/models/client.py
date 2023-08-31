@@ -1,38 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String
-from models import base, session, metadata, engine
-from models.modelclass import Model
-from sqlalchemy.orm import relationship
-from .associations import client_server_association
-
-class Client(base, Model):
-    __tablename__ = 'client'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tg_id = Column(Integer)
-    username = Column(String)
-    is_approved = Column(Boolean)
-    is_declined = Column(Boolean)
-    is_admin = Column(Boolean)
-
-    clients = relationship('Client', secondary=client_server_association, back_populates='servers')
-
-
-    def __init__(self, tg_id: int, username: str):
-        self.tg_id = tg_id
-        self.username = username
-        self.is_approved = False
-        self.is_declined = False
-        self.is_admin = False
-
-
-    def __repr__(self):
-        return f'<tg_id={self.tg_id} \
-        id={self.id} \
-        username={self.username} \
-        is_approved={self.is_approved} \
-        is_declined={self.is_declined} \
-        is_admin={self.is_admin}'
-
+from sqlalchemy import Integer
+from models import session, metadata, engine
+from .models import Client
 
 def get_client_by_tg_id(client_tg_id: Integer):
     return session.query(Client).filter(Client.tg_id == client_tg_id).first()

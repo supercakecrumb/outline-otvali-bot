@@ -2,6 +2,7 @@ from config import bot as botconfig
 from .mytelebot import myTeleBot
 from .admin import setup_admin_commands
 from .commands import setup_default_commands
+from .outline import setup_outline_commands
 from flask import Flask
 import flask
 import time
@@ -40,4 +41,5 @@ def init_webhook(bot: myTeleBot, app: Flask, webhook_host: str, webhook_url_path
 
 def init_message_handlers(bot: myTeleBot):
     setup_admin_commands(bot)
+    setup_outline_commands(bot)
     setup_default_commands(bot)

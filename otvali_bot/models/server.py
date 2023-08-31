@@ -1,41 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, UniqueConstraint
-from models import base, session, metadata, engine
-from models.modelclass import Model
-from sqlalchemy.orm import relationship
-from .associations import client_server_association
-from .client import Client
-
-class Server(base, Model):
-    __tablename__ = 'server'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    country = Column(String, unique=True)
-    city = Column(String, unique=True)
-    num_users = Column(Integer)
-    api_url = Column(String, unique=True)
-    cert_sha256 = Column(String)
-
-    # many-to-many relationship between servers and clients
-    clients = relationship('Client', secondary=client_server_association, back_populates='servers')
-
-    def __init__(self, country: str, city: str, api_url: str, cert_sha256: str):
-        self.country = country
-        self.city = city
-        self.api_url = api_url
-        self.cert_sha256 = cert_sha256
-        self.num_users = 0  # Initialized with 0 users
-
-    def __repr__(self):
-        return f'<id={self.id} \
-        country={self.country} \
-        city={self.city} \
-        num_users={self.num_users} \
-        api_url={self.api_url} \
-        cert_sha256={self.cert_sha256}>'
-
-metadata.create_all(engine)
-
+from models import session
 from sqlalchemy.orm import joinedload
+from .models import Server, Client
 
 def get_all_servers(): 
     return session.query(Server).all()
