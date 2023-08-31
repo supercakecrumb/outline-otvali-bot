@@ -1,18 +1,19 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Table, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
 Base = declarative_base()
-Session = sessionmaker()
 
-# Association table to manage many-to-many relationships between Client and Server
+# Association table to model many-to-many relationships between Clients and Servers
 client_server_association = Table('client_server', Base.metadata,
-                                  Column('client_id', Integer, ForeignKey('client.id')),
-                                  Column('server_id', Integer, ForeignKey('server.id'))
-                                  )
+    Column('client_id', Integer, ForeignKey('client.id')),
+    Column('server_id', Integer, ForeignKey('server.id')),
+    Column('outline_id', String)
+)
 
 class Client(Base):
     __tablename__ = 'client'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     tg_id = Column(Integer)
     username = Column(String)
@@ -20,10 +21,8 @@ class Client(Base):
     is_declined = Column(Boolean)
     is_admin = Column(Boolean)
 
-    # Many-to-Many relationship with Server
-    servers = relationship("Server",
-                           secondary=client_server_association,
-                           back_populates="clients")
+    # many-to-many relationship between clients and servers
+    servers = relationship('Server', secondary=client_server_association, back_populates='clients')
 
     def __init__(self, tg_id, username):
         self.tg_id = tg_id
@@ -34,18 +33,21 @@ class Client(Base):
 
 class Server(Base):
     __tablename__ = 'server'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     ip_address = Column(String)
     port = Column(Integer)
     country = Column(String)
     city = Column(String)
     num_users = Column(Integer)
+    api_url = Column(String)
+    cert_sha256 = Column(String)  # Assuming this is encrypted before storing
 
-    # Many-to-Many relationship with Client
-    clients = relationship("Client",
-                           secondary=client_server_association,
-                           back_populates="servers")
+    # many-to-many relationship between servers and clients
+    clients = relationship('Client', secondary=client_server_association, back_populates='servers')
 
-engine = create_engine('sqlite:///outline_service.db')
-Base.metadata.create_all(engine)
-Session.configure(bind=engine)
+def init_db(db_url):
+    engine = create_engine(db_url)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    return Session
