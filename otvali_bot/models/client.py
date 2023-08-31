@@ -1,7 +1,8 @@
-from sqlalchemy import Boolean, Column, Integer, String, select
+from sqlalchemy import Boolean, Column, Integer, String
 from models import base, session, metadata, engine
 from models.modelclass import Model
-
+from sqlalchemy.orm import relationship
+from .associations import client_server_association
 
 class Client(base, Model):
     __tablename__ = 'client'
@@ -12,6 +13,9 @@ class Client(base, Model):
     is_approved = Column(Boolean)
     is_declined = Column(Boolean)
     is_admin = Column(Boolean)
+
+    clients = relationship('Client', secondary=client_server_association, back_populates='servers')
+
 
     def __init__(self, tg_id: int, username: str):
         self.tg_id = tg_id

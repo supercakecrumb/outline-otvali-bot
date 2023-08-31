@@ -10,6 +10,7 @@ def setup_admin_commands(bot: myTeleBot):
         callback = bot.send_message(message.chat.id, "Please enter the password to receive admin rights")
         bot.register_next_step_handler(callback, receive_password)
 
+
     @bot.message_handler(commands=['waiting_list'])
     @admin_only
     def waiting_list(message):
