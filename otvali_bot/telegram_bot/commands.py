@@ -21,6 +21,9 @@ help_text = '''
    - View a list of servers for which you have an access key.
 
 📌 *Note*: In future updates, you will need admin approval to access individual servers.
+
+Guides for computers: https://centixkadon.github.io/b/app/shadowsocks/client/
+Guides for phones: https://play.google.com/store/apps/details?id=de.blinkt.openvpn 
 '''
 
 
