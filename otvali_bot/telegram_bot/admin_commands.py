@@ -31,7 +31,7 @@ def setup_admin_commands(bot: myTeleBot):
     def client_approve(message):
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
         username_or_id = message.text.split(' ')[1]
-        client = get_user(username_or_id)
+        client = get_client(username_or_id)
         if client is None:
             bot.send_message(message.chat.id, "This user hasn't been found!")
             return
@@ -60,7 +60,7 @@ def setup_admin_commands(bot: myTeleBot):
     def client_decline(message):
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
         username_or_id = message.text.split(' ')[1]
-        client = get_user(username_or_id)
+        client = get_client(username_or_id)
         if client is None:
             bot.send_message(message.chat.id, "This user hasn't been found!")
             return

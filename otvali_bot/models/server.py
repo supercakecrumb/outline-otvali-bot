@@ -9,8 +9,8 @@ class Server(base, Model):
     __tablename__ = 'server'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    country = Column(String)
-    city = Column(String)
+    country = Column(String, unique=True)
+    city = Column(String, unique=True)
     num_users = Column(Integer)
     api_url = Column(String, unique=True)
     cert_sha256 = Column(String)
@@ -37,19 +37,18 @@ metadata.create_all(engine)
 
 from sqlalchemy.orm import joinedload
 
-# Function to get a server by its ID
+def get_all_servers(): 
+    return session.query(Server).all()
+
 def get_server_by_id(server_id: int):
     return session.query(Server).filter(Server.id == server_id).first()
 
-# Function to get servers by their country
-def get_servers_by_country(country: str):
-    return session.query(Server).filter(Server.country == country).all()
+def get_server_by_country(country: str):
+    return session.query(Server).filter(Server.country == country).first()
 
-# Function to get servers by their city
-def get_servers_by_city(city: str):
-    return session.query(Server).filter(Server.city == city).all()
+def get_server_by_city(city: str):
+    return session.query(Server).filter(Server.city == city).first()
 
-# Function to get the list of servers that a user has access to
 def get_servers_by_client(client_id: int):
     client = session.query(Client).options(joinedload('servers')).filter(Client.id == client_id).first()
     if client:

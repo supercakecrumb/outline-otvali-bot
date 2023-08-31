@@ -38,7 +38,7 @@ def get_client_by_tg_id(client_tg_id: Integer):
     return session.query(Client).filter(Client.tg_id == client_tg_id).first()
 
 
-def get_user(username_or_id: str):
+def get_client(username_or_id: str):
     client = get_client_by_username(username_or_id)
     if client is None:
         client = get_client_by_id(username_or_id)

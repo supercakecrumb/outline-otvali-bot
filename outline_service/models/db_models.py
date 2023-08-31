@@ -40,8 +40,8 @@ class Server(Base):
     __tablename__ = 'server'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    country = Column(String)
-    city = Column(String)
+    country = Column(String, unique=True)
+    city = Column(String, unique=True)
     num_users = Column(Integer)
     api_url = Column(String, unique=True)  # Adding unique constraint to api_url
     cert_sha256 = Column(String)  # Assuming this is encrypted before storing
