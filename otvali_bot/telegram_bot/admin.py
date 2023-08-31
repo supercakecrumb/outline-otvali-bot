@@ -2,6 +2,7 @@ import os
 from .utils import admin_only
 from .mytelebot import myTeleBot
 from models.client import *
+from config.bot import admin_password
 
 def setup_admin_commands(bot: myTeleBot):
     @bot.message_handler(commands=['assign_admin'])
@@ -10,6 +11,16 @@ def setup_admin_commands(bot: myTeleBot):
         callback = bot.send_message(message.chat.id, "Please enter the password to receive admin rights")
         bot.register_next_step_handler(callback, receive_password)
 
+    def receive_password(message):
+        if message.text == admin_password:
+            client = get_client_by_tg_id(message.from_user.id)
+            if client is not None:
+                give_client_admin_rights(client)
+                bot.logger.info(f'{message.from_user.username} received admin rights')
+                bot.send_message(message.chat.id, "Now you're admin!")
+        else:
+            bot.send_message(message.chat.id, "Wrong password! Fuck off")
+        bot.delete_message(message.chat.id, message.message_id)
 
     @bot.message_handler(commands=['waiting_list'])
     @admin_only
@@ -81,14 +92,3 @@ def setup_admin_commands(bot: myTeleBot):
             decline_client(client)
             bot.send_message(client.tg_id, "You have been declined!")
         bot.send_message(message.chat.id, "All clients were declined!")
-
-    def receive_password(message):
-        if message.text == os.environ.get("PASSWORD"):
-            client = get_client_by_tg_id(message.from_user.id)
-            if client is not None:
-                give_client_admin_rights(client)
-                bot.logger.info(f'{message.from_user.username} received admin rights')
-                bot.send_message(message.chat.id, "Now you're admin!")
-        else:
-            bot.send_message(message.chat.id, "Wrong password! Fuck off")
-        bot.delete_message(message.chat.id, message.message_id)

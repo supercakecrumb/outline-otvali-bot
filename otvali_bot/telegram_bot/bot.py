@@ -1,6 +1,6 @@
 from config import bot as botconfig
 from .mytelebot import myTeleBot
-from .admin_commands import setup_admin_commands
+from .admin import setup_admin_commands
 from .commands import setup_default_commands
 from flask import Flask
 import flask
