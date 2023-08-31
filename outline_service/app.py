@@ -13,7 +13,6 @@ def create_user():
     client_id = data.get('client_id')
     server_id = data.get('server_id')
 
-    app.logging.debug("wtf?")
     session = Session()
 
     client_db = session.query(Client).filter_by(id=client_id).first()
@@ -38,26 +37,31 @@ def create_user():
 
     return jsonify({"message": "User created on the server", "outline_id": new_key.key_id}), 201
 
-@app.route('/delete_user/<string:outline_id>', methods=['DELETE'])
-def delete_user(outline_id):
+def delete_user(client_id):
     session = Session()
-    client_db = session.query(Client).filter_by(outline_id=outline_id).first()
+    client_db = session.query(Client).filter_by(id=client_id).first()
 
     if client_db:
-        server = client_db.servers[0]  # assuming each client is only associated with one server
-        client = OutlineVPN(api_url=server.api_url, cert_sha256=server.cert_sha256)
+        server_association = session.query(client_server_association).filter_by(client_id=client_db.id).first()
 
-        client.delete_key(outline_id)  # Deleting from Outline server
-        session.delete(client_db)  # Deleting from your database
-        session.commit()
-        return jsonify({"message": "User deleted"}), 200
+        if server_association:
+            server = session.query(Server).filter_by(id=server_association.server_id).first()
+            outline_id = server_association.outline_id
+
+            client = OutlineVPN(api_url=server.api_url, cert_sha256=server.cert_sha256)
+
+            client.delete_key(outline_id)
+            session.delete(server_association)
+            session.delete(client_db)
+            session.commit()
+            return jsonify({"message": "User deleted"}), 200
 
     return jsonify({"message": "User not found"}), 404
 
-@app.route('/get_key/<string:outline_id>', methods=['GET'])
-def get_key(outline_id):
+@app.route('/get_key/<int:client_id>', methods=['GET'])
+def get_key(client_id):
     session = Session()
-    client_db = session.query(Client).filter_by(outline_id=outline_id).first()
+    client_db = session.query(Client).filter_by(id=client_id).first()
 
     if not client_db:
         return jsonify({"message": "User not found"}), 404
@@ -65,7 +69,10 @@ def get_key(outline_id):
     if not client_db.servers:
         return jsonify({"message": "Client has no relation with any server"}), 403
 
-    server = client_db.servers[0]  # assuming each client is only associated with one server
+    server_association = session.query(client_server_association).filter_by(client_id=client_db.id).first()
+    outline_id = server_association.outline_id
+
+    server = session.query(Server).filter_by(id=server_association.server_id).first()
     client = OutlineVPN(api_url=server.api_url, cert_sha256=server.cert_sha256)
 
     key_info = [key for key in client.get_keys() if key.key_id == outline_id]
@@ -74,6 +81,7 @@ def get_key(outline_id):
         return jsonify({"key": key_info[0].access_url}), 200
 
     return jsonify({"message": "Key not found in the Outline server"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
