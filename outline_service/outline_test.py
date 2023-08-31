@@ -38,7 +38,9 @@ def associate_client_server(session, client_id, server_id, outline_id):
 # Example of usage
 if __name__ == "__main__":
     session = Session()
-    add_server(session, "https://164.92.161.84:23870/PwAYn7W0w_jIRXJFCOQAiw", "A8958F76CEC98DCF5EE6D0C6F89785ECF169E4211686AA9DCCE10F4E16514B00", "Germany", "Frankfurt", 0)
+    # add_server(session, "https://164.92.161.84:23870/PwAYn7W0w_jIRXJFCOQAiw", "A8958F76CEC98DCF5EE6D0C6F89785ECF169E4211686AA9DCCE10F4E16514B00", "Germany", "Frankfurt", 0)
+    # add_server(session, "https://158.160.119.15:23779/Gtn51iPM0qdJhd-vlfE3lg", "4FA93EBC04142AB03FF5EAC8E72036EF66384CDCE9C1AD6EE6D3DCEBBB7B29E8", "Russia", "Moscow", 0)
+    add_server(session, "https://185.215.187.6:12395/qqWBbW098iB2VSvGIuUnrw", "1DD7873CD449CC5C759566E4E62AAB0781109CA6FF94CB5E70A3FE235B5B29C0", "Estonia", "Narva", 0)
     # add_client(session, 1234, "username", is_approved=True)
     # add_client(session, 1, "john_doe")
     # add_server(session, "https://example.com", "cert_sha256_here", "192.168.1.1", 5000, "US", "San Francisco", 0)
