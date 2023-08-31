@@ -1,24 +1,33 @@
 from sqlalchemy import Integer
 from models import session, metadata, engine
 from .models import Client
-
-def get_client_by_tg_id(client_tg_id: Integer):
-    return session.query(Client).filter(Client.tg_id == client_tg_id).first()
+from typing import List
 
 
-def get_client(username_or_id: str):
+
+def get_client(username_or_id: str) -> Client:
     client = get_client_by_username(username_or_id)
     if client is None:
         client = get_client_by_id(username_or_id)
+    if client is None:
+        client = get_client_by_tg_id(username_or_id)
     return client
 
 
-def get_client_by_id(client_id: Integer):
+def get_clients() -> List[Client]:
+    return session.query(Client).all()
+
+
+def get_client_by_id(client_id: Integer) -> Client:
     return session.query(Client).filter(Client.id == client_id).first()
 
 
-def get_client_by_username(username: str):
+def get_client_by_username(username: str) -> Client:
     return session.query(Client).filter(Client.username == username).first()
+
+
+def get_client_by_tg_id(client_tg_id: Integer) -> Client:
+    return session.query(Client).filter(Client.tg_id == client_tg_id).first()
 
 
 def save_new_client(tg_id: int, username: str):

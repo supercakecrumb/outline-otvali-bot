@@ -1,5 +1,5 @@
 from models.client import get_client_by_tg_id
-
+import time
 
 def admin_only(func):
     def wrapper(message):
@@ -11,7 +11,7 @@ def admin_only(func):
     return wrapper
 
 
-def delete_message_after_a_minute(bot, chat_id, message_id, time):
+def delete_message_after_a_minute(bot, chat_id, message_id, duration):
     time.sleep(60)
     bot.delete_message(chat_id, message_id)
 

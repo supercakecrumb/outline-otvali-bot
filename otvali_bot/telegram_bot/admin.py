@@ -5,7 +5,7 @@ from models.client import *
 from config.bot import admin_password
 
 def setup_admin_commands(bot: myTeleBot):
-    @bot.message_handler(commands=['assign_admin'])
+    @bot.message_handler(commands=['become_admin'])
     def assign_admin(message):
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
         callback = bot.send_message(message.chat.id, "Please enter the password to receive admin rights")
@@ -22,9 +22,9 @@ def setup_admin_commands(bot: myTeleBot):
             bot.send_message(message.chat.id, "Wrong password! Fuck off")
         bot.delete_message(message.chat.id, message.message_id)
 
-    @bot.message_handler(commands=['waiting_list'])
+    @bot.message_handler(commands=['waitlist'])
     @admin_only
-    def waiting_list(message):
+    def waitlist(message):
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
         clients = get_wait_list()
         clients_list = str()
@@ -92,3 +92,13 @@ def setup_admin_commands(bot: myTeleBot):
             decline_client(client)
             bot.send_message(client.tg_id, "You have been declined!")
         bot.send_message(message.chat.id, "All clients were declined!")
+
+
+    @bot.message_handler(commands=['users'])
+    @admin_only
+    def get_users(message):
+        bot.logger.info(f'{message.from_user.username} sent {message.text}')
+        users = get_clients()
+        out = "\n".join(map(repr, users))
+        bot.send_message(message.chat.id, "Found users:\n" + out)
+

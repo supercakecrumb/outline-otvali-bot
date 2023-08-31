@@ -34,12 +34,7 @@ class Client(base, Model):
 
 
     def __repr__(self):
-        return f'<tg_id={self.tg_id} \
-        id={self.id} \
-        username={self.username} \
-        is_approved={self.is_approved} \
-        is_declined={self.is_declined} \
-        is_admin={self.is_admin}'
+        return f'{self.id}. @{self.username} approved={self.is_approved} declined={self.is_declined} admin={self.is_admin}'
 
 
 class Server(base, Model):
