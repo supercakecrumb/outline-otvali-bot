@@ -4,9 +4,9 @@ class OutlineGetter:
     _instance = None
 
     @classmethod
-    def get_instance(cls, api_url=None, cert_sha256=None):
+    def get_instance(cls, base_url=None):
         if cls._instance is None:
-            if api_url is None or cert_sha256 is None:
+            if base_url is None:
                 raise ValueError("Must supply api_url and cert_sha256 for the first instantiation")
-            cls._instance = outlineService(api_url, cert_sha256)
+            cls._instance = outlineService(base_url)
         return cls._instance

@@ -1,6 +1,6 @@
 from models.db_models import Client, Server, client_server_association, init_db
 
-Session = init_db("sqlite:///app.db")
+Session = init_db("sqlite:///../app.db")
 
 def add_client(session, tg_id, username, is_approved=True):
     new_client = Client(tg_id, username)

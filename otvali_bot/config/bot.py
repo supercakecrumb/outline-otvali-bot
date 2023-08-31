@@ -5,6 +5,7 @@ load_dotenv()
 
 token = os.environ.get("BOT_TOKEN")
 logging_config_path = os.environ.get("LOGGING_CONFIG_PATH", "logging.conf")
+outline_service_url = os.environ.get("OUTLINE_SERVICE_URL", "http://0.0.0.0:5000")
 webhook_host = os.environ.get("WEBHOOK_HOST")
 webhook_port = os.environ.get("WEBHOOK_PORT", "80")
 webhook_listen = os.environ.get("WEBHOOK_LISTEN", "0.0.0.0")

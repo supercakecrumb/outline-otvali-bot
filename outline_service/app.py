@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from outline_module.outline_vpn.outline_vpn import OutlineVPN
 from models.db_models import init_db
 
-Session = init_db('sqlite:///app.db')
+Session = init_db('sqlite:///../app.db')
 
 app = Flask(__name__)
 
