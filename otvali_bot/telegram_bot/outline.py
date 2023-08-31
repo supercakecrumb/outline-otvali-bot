@@ -8,6 +8,33 @@ import threading  # import the threading module
 MESSAGE_DELETION_TIMEOUT = 60
 
 def setup_outline_commands(bot: myTeleBot):
+    @bot.message_handler(commands=['create_key'])
+    def create_key_command(message):
+        client_id = get_client(message.chat.id)  # Replace with your actual function to get the client_id
+        
+        args = message.text.split(' ')[1:]
+        if not args:
+            bot.send_message(message.chat.id, "You must specify a server by its ID, city, or country.")
+            return
+
+        query_value = " ".join(args)
+        server = None
+
+        if is_convertible_to_int(query_value):
+            server = get_server_by_id(int(query_value))
+        if server is None:
+            server = get_server_by_city(query_value)
+        if server is None:
+            server = get_server_by_country(query_value)
+
+        if server is None:
+            bot.send_message(message.chat.id, f"Invalid query. No server found for {query_value}")
+            return
+
+        outline_service = OutlineGetter.get_instance()
+        outline_service.create_user(client_id, server.id)
+        bot.send_message(message.chat.id, f"Key created successfully! You can get it with /my_keys or /get_key <server>")
+
     @bot.message_handler(commands=['get_key'])
     def get_key(message):
         client_id = get_client(message.chat.id)
@@ -35,7 +62,7 @@ def setup_outline_commands(bot: myTeleBot):
             key_info = otline_service.get_key(client_id)
             
             if key_info:
-                sent_message = bot.send_message(message.chat.id, f"This message will be deleted in 1 minute\n```\nYour key: {key_info}\n```", parse_mode='Markdown')
+                sent_message = bot.send_message(message.chat.id, f"This message will be deleted in 1 minute\n\nYour key: ```{key_info}\n```", parse_mode='Markdown')
                 threading.Thread(target=delete_message_after_a_minute, args=(bot, message.chat.id, sent_message.message_id, MESSAGE_DELETION_TIMEOUT)).start()
             else:
                 bot.send_message(message.chat.id, "Key not found.")
@@ -55,7 +82,7 @@ def setup_outline_commands(bot: myTeleBot):
                 ])
                 sent_message = bot.send_message(
                     message.chat.id,
-                    f"This message will be deleted in 1 minute\n```\nYour keys:\n{servers_str}\n```",
+                    f"This message will be deleted in 1 minute\n\nYou have keys in:\n{servers_str}\nWrite /get_key <server> to get one.",
                     parse_mode='Markdown'
                 )
                 threading.Thread(
