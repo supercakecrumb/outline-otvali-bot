@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  
+  bot:
+    image: valyankilyan/otvali-bot:latest
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - SQL_ENGINE_URL=postgresql://${POSTGRES_USER}:${DB_PASSWORD}@postgres:5432/your_db_name
+      - LOGGING_CONFIG_PATH=logging.conf
+      - OUTLINE_SERVICE_URL=http://outline:5000
+      - WEBHOOK_HOST=${WEBHOOK_HOST}
+      - WEBHOOK_PORT=${WEBHOOK_PORT}
+      - WEBHOOK_LISTEN=0.0.0.0
+      - WEBHOOK_CERT=${WEBHOOK_CERT}
+      - WEBHOOK_PRIV=${WEBHOOK_PRIV}
+      - WEBHOOK_URL_PATH=/api/web-hook/
+      - USE_WEBHOOK=False
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    ports:
+      - "8000:8000" # Bot service port
+    depends_on:
+      - postgres
+      - outline
+  
+  # Outline Service
+  outline:
+    image: valyankilyan/outline-service:latest
+    environment:
+      - SQL_ENGINE_URL=postgresql://${POSTGRES_USER}:${DB_PASSWORD}@postgres:5432/your_db_name
+      - LOGGING_CONFIG_PATH=logging.conf
+    ports:
+      - "5000:5000" # Outline service port
+  
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432" # PostgreSQL port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

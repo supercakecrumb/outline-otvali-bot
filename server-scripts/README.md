@@ -1,0 +1,3 @@
+#
+
+seems that we just need to install outline-manager... and follow the simplest in the world [instructions](https://getoutline.org/ru/get-started/#step-1)...
