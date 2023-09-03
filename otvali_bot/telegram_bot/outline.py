@@ -8,7 +8,7 @@ import threading  # import the threading module
 MESSAGE_DELETION_TIMEOUT = 60
 
 def setup_outline_commands(bot: myTeleBot):
-    @bot.message_handler(commands=['create_key'])
+
     @bot.message_handler(commands=['create_key'])
     def create_key_command(message):
         try:
