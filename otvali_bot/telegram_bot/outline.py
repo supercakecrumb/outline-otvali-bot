@@ -14,13 +14,14 @@ OUTLINE_SERVER_MENU_CALLBACK_PREFIX = "server_menu"
 def handle_server_menu_callback(bot: myTeleBot, call: types.CallbackQuery):
     bot.logger.debug(f"Recieved server menu callback from {call.from_user.username}: {call.data}")
     server_id = call.data.replace(f"{OUTLINE_SERVER_MENU_CALLBACK_PREFIX}_", "")
-    try: 
-        server_id = int(server_id)
-    except Exception as e:
+
+    if not is_convertible_to_int(server_id):
         bot.logger.Error(f"Server menu button error: cannot parse to int {server_id}")
         bot.answer_callback_query(callback_query_id=call.id, text="Something went wrong", show_alert=False)
         bot.edit_message_text("Something went wrong, we already trying to fix it. Try later pls.", call.message.chat.id, call.message.message_id, reply_markup=None)
         return
+    
+    server_id = int(server_id)
 
     server = get_server_by_id(server_id)
     client = get_client(call.from_user.id)
