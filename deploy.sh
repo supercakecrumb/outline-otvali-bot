@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex 
+set -e
 
 IAM_TOKEN=$(curl -H Metadata-Flavor:Google http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token | jq -r .access_token)
 
