@@ -42,7 +42,7 @@ def handle_server_menu_callback(bot: myTeleBot, call: types.CallbackQuery):
             sent_message = bot.send_message(call.message.chat.id, f"This message will be deleted in 1 minute\n\nYour key:\n```{key_info}```", parse_mode='Markdown')
             threading.Thread(target=delete_message_after_a_minute, args=(bot, call.message.chat.id, sent_message.message_id, MESSAGE_DELETION_TIMEOUT)).start()
             bot.edit_message_text(f"Your key for {get_country_emoji(server.country)} {server.city}, {server.country} has been sent.", call.message.chat.id, call.message.message_id, reply_markup=None)
-            bot.logger.info(f"Key sent to chat ID: {call.message.chat.id}")
+            bot.logger.info(f"Key sent to {call.message.from_user.username}")
         else:
             bot.logger.error(f"Key from server {server.id} for user {client.username} wasn't found.")
             bot.answer_callback_query(callback_query_id=call.id, text="Something went wrong", show_alert=False)
