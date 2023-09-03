@@ -1,117 +1,83 @@
 from .mytelebot import myTeleBot
 from models.client import *
 from models.server import *
+from models.utils import client_has_key
+from time import sleep
 from outline_service.outline_getter import OutlineGetter
 from .utils import get_country_emoji, delete_message_after_a_minute, is_convertible_to_int
-import threading  # import the threading module
+from telebot import types
+import threading
 
 MESSAGE_DELETION_TIMEOUT = 60
+OUTLINE_SERVER_MENU_CALLBACK_PREFIX = "server_menu"
+
+def handle_server_menu_callback(bot: myTeleBot, call: types.CallbackQuery):
+    bot.logger.debug(f"Recieved server menu callback from {call.from_user.username}: {call.data}")
+    server_id = call.data.replace(f"{OUTLINE_SERVER_MENU_CALLBACK_PREFIX}_", "")
+    try: 
+        server_id = int(server_id)
+    except Exception as e:
+        bot.logger.Error(f"Server menu button error: cannot parse to int {server_id}")
+        bot.answer_callback_query(callback_query_id=call.id, text="Something went wrong", show_alert=False)
+        bot.edit_message_text("Something went wrong, we already trying to fix it. Try later pls.", call.message.chat.id, call.message.message_id, reply_markup=None)
+        return
+
+    server = get_server_by_id(server_id)
+    client = get_client(call.from_user.id)
+
+    if server:
+        outline_service = OutlineGetter.get_instance()
+
+        if not client_has_key(client.id, server.id):
+            outline_service.create_user(client.id, server.id)
+            bot.edit_message_text("Creating a key...", call.message.chat.id, call.message.message_id, reply_markup=None)
+            sleep(1)
+        else:
+            bot.edit_message_text("Sending a key...", call.message.chat.id, call.message.message_id, reply_markup=None)
+            
+        key_info = outline_service.get_key(client.id, server.id)
+        
+        if key_info:
+            sent_message = bot.send_message(call.message.chat.id, f"This message will be deleted in 1 minute\n\nYour key:\n```{key_info}```", parse_mode='Markdown')
+            threading.Thread(target=delete_message_after_a_minute, args=(bot, call.message.chat.id, sent_message.message_id, MESSAGE_DELETION_TIMEOUT)).start()
+            bot.edit_message_text(f"Your key for {get_country_emoji(server.country)} {server.city}, {server.country} has been sent.", call.message.chat.id, call.message.message_id, reply_markup=None)
+            bot.logger.info(f"Key sent to chat ID: {call.message.chat.id}")
+        else:
+            bot.logger.error(f"Key from server {server.id} for user {client.username} wasn't found.")
+            bot.answer_callback_query(callback_query_id=call.id, text="Something went wrong", show_alert=False)
+            bot.edit_message_text("Something went wrong, we already trying to fix it. Try later pls.", call.message.chat.id, call.message.message_id, reply_markup=None)
+            return
+    else:
+        bot.logger.Error(f"Server menu button error: cannot find server {server_id}")
+        bot.answer_callback_query(callback_query_id=call.id, text="Something went wrong", show_alert=False)
+        bot.edit_message_text("Something went wrong, we already trying to fix it. Try later pls.", call.message.chat.id, call.message.message_id, reply_markup=None)
+
+
+    bot.answer_callback_query(callback_query_id=call.id, text="", show_alert=False)
+    
+
+def server_menu_markup() -> types.InlineKeyboardMarkup:
+    markup = types.InlineKeyboardMarkup()
+    servers = get_all_servers()
+
+    buttons = ([types.InlineKeyboardButton(f"{get_country_emoji(server.country)} {server.city}, {server.country}", callback_data=f"{OUTLINE_SERVER_MENU_CALLBACK_PREFIX}_{server.id}") for server in servers])
+    for b in buttons:
+        markup.add(b)
+
+    return markup
+
 
 def setup_outline_commands(bot: myTeleBot):
 
-    @bot.message_handler(commands=['create_key'])
-    def create_key_command(message):
-        try:
-            bot.logger.debug("Starting create_key_command function")
-            client = get_client(message.chat.id)
-            client_id = client.id
-            bot.logger.debug(f"Retrieved client ID: {client_id}")
-
-            args = message.text.split(' ')[1:]
-            if not args:
-                bot.send_message(message.chat.id, "You must specify a server by its ID, city, or country.")
-                return
-
-            query_value = " ".join(args)
-            server = None
-
-            if is_convertible_to_int(query_value):
-                server = get_server_by_id(int(query_value))
-            if server is None:
-                server = get_server_by_city(query_value)
-            if server is None:
-                server = get_server_by_country(query_value)
-
-            if server is None:
-                bot.send_message(message.chat.id, f"Invalid query. No server found for {query_value}")
-                return
-
-            bot.logger.info(f"Server found: {server}")
-            outline_service = OutlineGetter.get_instance()
-            outline_service.create_user(client_id, server.id)
-            bot.send_message(message.chat.id, f"Key created successfully! You can get it with /my_keys or /get_key <server>")
-            
-        except Exception as e:
-            bot.logger.error(f"An error occurred in create_key_command: {e}")
-
-
     @bot.message_handler(commands=['get_key'])
-    def get_key(message):
-        bot.logger.info(f"Received get_key command from chat ID: {message.chat.id}")
-        client = get_client(message.chat.id)
-        client_id = client.id
-        
-        args = message.text.split(' ')[1:]
-        if not args:
-            bot.send_message(message.chat.id, f"You must specify a server by its ID, city, or country. Server {args} not found")
-            bot.logger.error("Server information not provided.")
-            return
-
-        query_value = " ".join(args)
-        server = None
-
-        if is_convertible_to_int(query_value):
-            server = get_server_by_id(int(query_value))
-        if server is None:
-            server = get_server_by_city(query_value)
-        if server is None:
-            server = get_server_by_country(query_value)
-        if server is None:
-            bot.send_message(message.chat.id, f"Invalid query type. Please specify 'id', 'city', or 'country'. Server {args} not found")
-            bot.logger.error(f"Invalid query type. Server {args} not found.")
-            return
-
-        if server:
-            otline_service = OutlineGetter.get_instance()
-            key_info = otline_service.get_key(client_id, server.id)
-            
-            if key_info:
-                sent_message = bot.send_message(message.chat.id, f"This message will be deleted in 1 minute\n\nYour key from server {get_country_emoji(server.country)} {server.city}, {server.country}:\n```{key_info}```", parse_mode='Markdown')
-                threading.Thread(target=delete_message_after_a_minute, args=(bot, message.chat.id, sent_message.message_id, MESSAGE_DELETION_TIMEOUT)).start()
-                bot.logger.info(f"Key sent to chat ID: {message.chat.id}")
-            else:
-                bot.send_message(message.chat.id, "Key not found.")
-                bot.logger.error("Key not found.")
-        else:
-            bot.send_message(message.chat.id, "No servers found for your query.")
-            bot.logger.error("No servers found for the query.")
-
-
-    @bot.message_handler(commands=['my_keys'])
-    def my_keys(message):
-        bot.logger.info(f"Received my_keys command from chat ID: {message.chat.id}")
-        client = get_client(message.chat.id)
-        if client:
-            accessible_servers = client.servers  
-            
-            if accessible_servers:
-                servers_str = "\n".join([
-                    f"{get_country_emoji(server.country)} {server.id}. {server.city}, {server.country}"
-                    for server in accessible_servers
-                ])
-                bot.send_message(
-                    message.chat.id,
-                    f"This message will be deleted in 1 minute\n\nYou have keys in:\n{servers_str}\nWrite /get_key <server> to get one.",
-                    parse_mode='Markdown'
-                )
-            else:
-                bot.send_message(message.chat.id, "You have no accessible servers.")
-        else:
-            bot.send_message(message.chat.id, "Client not found.")
+    def get_key(message: types.Message):
+        bot.logger.info(f'{message.from_user.username} sent {message.text}')
+        markup = server_menu_markup()
+        bot.send_message(message.chat.id, "Choose a server:", reply_markup=markup)
 
 
     @bot.message_handler(commands=['server_list'])
-    def server_list(message):
+    def server_list(message: types.Message):
         bot.logger.info(f"Received server_list command from chat ID: {message.chat.id}")
         servers = get_all_servers()
 

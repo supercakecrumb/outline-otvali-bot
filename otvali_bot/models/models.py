@@ -24,14 +24,12 @@ class Client(base, Model):
 
     servers = relationship('Server', secondary=client_server_association, back_populates='clients')
     
-
     def __init__(self, tg_id: int, username: str):
         self.tg_id = tg_id
         self.username = username
         self.is_approved = False
         self.is_declined = False
         self.is_admin = False
-
 
     def __repr__(self):
         return f'{self.id}. @{self.username} approved={self.is_approved} declined={self.is_declined} admin={self.is_admin}'
