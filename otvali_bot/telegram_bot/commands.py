@@ -28,7 +28,7 @@ def setup_default_commands(bot: myTeleBot):
     def send_help(message):
         sync_chat(message)
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
-        bot.send_message(message.chat.id, help_text)
+        bot.send_message(message.chat.id, help_text, parse_mode='Markdown', disable_web_page_preview=True)
 
 
     @bot.message_handler(func=lambda m: True)
