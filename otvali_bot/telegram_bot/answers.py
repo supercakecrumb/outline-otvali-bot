@@ -1,27 +1,21 @@
 from .types import get_key_command
 
 help_text = '''
-🛡️ *OtVali Help* 🛡️
+*OtVali HowTo*
 
 1. `Approval`
    - Wait for admin approval to gain access to our servers. You will be notified once approved.
 
-2. `/server_list` 
-   - Browse through a list of available servers to find one that suits your needs.
+2. `/get_key`
+   - Choose a server and get your special key to access the server.
 
-3. `/create_key <server>` e.g. /create_key Frankfurt
-   - Generate a new access key for the server specified. Use server ID, city, or country as the parameter.
+3. `Insert`
+   - Insert it in your shadowsocks application of your choice
 
-4. `/get_key <server>` e.g. /get_key Germany
-   - Retrieve your generated key for immediate use. The message containing the key will be deleted after 1 minute for security.
-
-5. `/my_keys`
-   - View a list of servers for which you have an access key.
-
-📌 *Note*: In future updates, you will need admin approval to access individual servers.
-
-Guides for computers: https://centixkadon.github.io/b/app/shadowsocks/client/
-Guides for phones: https://play.google.com/store/apps/details?id=de.blinkt.openvpn 
+*Clients*
+If you don't know where to install vpn client you could chose from here 
+- outlineVPN: https://clck.ru/35Zeh9
+- ShadowSocks client from TrueNight: https://clck.ru/35ZehW (for android and my personal choice)
 '''
 
 already_approved_text = f"Your request already has been approved. In order to get VPN credentials write /{get_key_command}"
