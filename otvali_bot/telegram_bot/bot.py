@@ -3,6 +3,7 @@ from .mytelebot import myTeleBot
 from .admin import setup_admin_commands
 from .commands import setup_default_commands
 from .outline import setup_outline_commands
+from .callback import setup_callback_queries
 from flask import Flask
 import flask
 import time
@@ -43,3 +44,4 @@ def init_message_handlers(bot: myTeleBot):
     setup_admin_commands(bot)
     setup_outline_commands(bot)
     setup_default_commands(bot)
+    setup_callback_queries(bot)

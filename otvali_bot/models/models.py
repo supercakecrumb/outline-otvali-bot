@@ -15,6 +15,7 @@ client_server_association = Table(
 class Client(base, Model):
     __tablename__ = 'client'
 
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     tg_id = Column(Integer)
     username = Column(String)
@@ -23,7 +24,7 @@ class Client(base, Model):
     is_admin = Column(Boolean)
 
     servers = relationship('Server', secondary=client_server_association, back_populates='clients')
-    
+
 
     def __init__(self, tg_id: int, username: str):
         self.tg_id = tg_id
@@ -31,7 +32,6 @@ class Client(base, Model):
         self.is_approved = False
         self.is_declined = False
         self.is_admin = False
-
 
     def __repr__(self):
         return f'{self.id}. @{self.username} approved={self.is_approved} declined={self.is_declined} admin={self.is_admin}'
@@ -50,12 +50,14 @@ class Server(base, Model):
     # many-to-many relationship between servers and clients
     clients = relationship('Client', secondary=client_server_association, back_populates='servers')
 
+
     def __init__(self, country: str, city: str, api_url: str, cert_sha256: str):
         self.country = country
         self.city = city
         self.api_url = api_url
         self.cert_sha256 = cert_sha256
         self.num_users = 0  # Initialized with 0 users
+
 
     def __repr__(self):
         return f'<id={self.id} \
