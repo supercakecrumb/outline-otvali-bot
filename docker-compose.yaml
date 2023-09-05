@@ -3,10 +3,10 @@ version: '3.8'
 services:
   
   bot:
-    image: angrydogy/vpn-bot:latest
+    image: ${BOT_IMAGE}
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
-      - SQL_ENGINE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - SQL_ENGINE_URL=SQL_ENGINE_URL
       - LOGGING_CONFIG_PATH=logging.conf
       - OUTLINE_SERVICE_URL=http://outline:5000
       - WEBHOOK_HOST=${WEBHOOK_HOST}
@@ -15,7 +15,7 @@ services:
       - WEBHOOK_CERT=${WEBHOOK_CERT}
       - WEBHOOK_PRIV=${WEBHOOK_PRIV}
       - WEBHOOK_URL_PATH=/api/web-hook/
-      - USE_WEBHOOK=False
+      - USE_WEBHOOK=${USER_WEBHOOK}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - "8000:8000" # Bot service port
@@ -25,23 +25,12 @@ services:
   
   # Outline Service
   outline:
-    image: angrydogy/outline-service:latest
+    image: ${OUTLINE_IMAGE}
     environment:
-      - SQL_ENGINE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - SQL_ENGINE_URL=${SQL_ENGINE_URL}
       - LOGGING_CONFIG_PATH=logging.conf
     ports:
       - "5000:5000" # Outline service port
-  
-  # PostgreSQL Database
-  postgres:
-    image: postgres:latest
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432" # PostgreSQL port
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
