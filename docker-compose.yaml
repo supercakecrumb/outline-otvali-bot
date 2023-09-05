@@ -4,9 +4,10 @@ services:
   
   bot:
     image: ${BOT_IMAGE}
+    restart: always
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
-      - SQL_ENGINE_URL=SQL_ENGINE_URL
+      - SQL_ENGINE_URL=${SQL_ENGINE_URL}
       - LOGGING_CONFIG_PATH=logging.conf
       - OUTLINE_SERVICE_URL=http://outline:5000
       - WEBHOOK_HOST=${WEBHOOK_HOST}
@@ -24,6 +25,7 @@ services:
   
   outline:
     image: ${OUTLINE_IMAGE}
+    restart: always
     environment:
       - SQL_ENGINE_URL=${SQL_ENGINE_URL}
       - LOGGING_CONFIG_PATH=logging.conf

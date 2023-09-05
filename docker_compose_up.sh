@@ -18,7 +18,7 @@ export SECRET_PAYLOAD=$(curl -X GET -H "Authorization: Bearer ${IAM_TOKEN}" http
 export BOT_TOKEN=$(echo $SECRET_PAYLOAD | jq -r '.entries[] | select(.key=="BOT_TOKEN") | .textValue')
 export ADMIN_PASSWORD=$(echo $SECRET_PAYLOAD | jq -r '.entries[] | select(.key=="admin-password") | .textValue')
 
-export §POSTGRES_USER=$(echo $SECRET_PAYLOAD | jq -r '.entries[] | select(.key=="postgres-user") | .textValue')
+export POSTGRES_USER=$(echo $SECRET_PAYLOAD | jq -r '.entries[] | select(.key=="postgres-user") | .textValue')
 export POSTGRES_PASSWORD=$(echo $SECRET_PAYLOAD | jq -r '.entries[] | select(.key=="postgres-password") | .textValue')
 export SQL_ENGINE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}/
 
