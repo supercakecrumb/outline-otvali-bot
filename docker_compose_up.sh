@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source /var/otvali/.env
+
 BOT_IMAGE=${BOT_IMAGE:-valyankilyan/otvali_bot:0.0.1}
 OUTLINE_IMAGE=${OUTLINE_IMAGE:-valyankilyan/outline_service:0.0.1}
 USER_WEBHOOK=${USER_WEBHOOK:-False}
