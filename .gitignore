@@ -160,3 +160,6 @@ cython_debug/
 
 app.db
 .idea
+migration_script.sh
+db.sql
+db.sql-e
