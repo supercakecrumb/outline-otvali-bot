@@ -5,12 +5,15 @@ from typing import List
 
 
 
-def get_client(username_or_id: str) -> Client:
-    client = get_client_by_username(username_or_id)
-    if client is None:
+def get_client(username_or_id) -> Client:
+    if isinstance(username_or_id, int):
         client = get_client_by_id(username_or_id)
+    else:
+        client = get_client_by_username(username_or_id)
+    
     if client is None:
         client = get_client_by_tg_id(username_or_id)
+    
     return client
 
 
