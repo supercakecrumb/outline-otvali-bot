@@ -18,20 +18,15 @@ services:
       - USE_WEBHOOK=${USER_WEBHOOK}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
-      - "8000:8000" # Bot service port
+      - "8000:8000"
     depends_on:
-      - postgres
       - outline
   
-  # Outline Service
   outline:
     image: ${OUTLINE_IMAGE}
     environment:
       - SQL_ENGINE_URL=${SQL_ENGINE_URL}
       - LOGGING_CONFIG_PATH=logging.conf
     ports:
-      - "5000:5000" # Outline service port
-
-volumes:
-  postgres_data:
+      - "5000:5000"
 
