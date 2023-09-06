@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  
+  bot:
+    image: ${BOT_IMAGE}
+    restart: always
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - SQL_ENGINE_URL=${SQL_ENGINE_URL}
+      - LOGGING_CONFIG_PATH=logging.conf
+      - OUTLINE_SERVICE_URL=http://outline:8080
+      - WEBHOOK_HOST=${WEBHOOK_HOST}
+      - WEBHOOK_PORT=${WEBHOOK_PORT}
+      - WEBHOOK_LISTEN=0.0.0.0
+      - WEBHOOK_CERT=${WEBHOOK_CERT}
+      - WEBHOOK_PRIV=${WEBHOOK_PRIV}
+      - WEBHOOK_URL_PATH=/api/web-hook/
+      - USE_WEBHOOK=${USE_WEBHOOK}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - outline
+  
+  outline:
+    image: ${OUTLINE_IMAGE}
+    restart: always
+    environment:
+      - SQL_ENGINE_URL=${SQL_ENGINE_URL}
+      - LOGGING_CONFIG_PATH=logging.conf
+    ports:
+      - "8080:8080"
+

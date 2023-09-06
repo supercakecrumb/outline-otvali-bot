@@ -1,0 +1,5 @@
+BOT_IMAGE=valyankilyan/otvali_bot:0.0.1
+OUTLINE_IMAGE=valyankilyan/outline_service:0.0.1
+USER_WEBHOOK=False
+POSTGRES_IP=51.250.71.250:5432
+SECRET_ID=e6qnd7ibmveg2m8pbenp
