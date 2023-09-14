@@ -45,3 +45,4 @@ def init_message_handlers(bot: myTeleBot):
     setup_outline_commands(bot)
     setup_default_commands(bot)
     setup_callback_queries(bot)
+

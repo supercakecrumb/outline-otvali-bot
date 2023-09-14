@@ -4,7 +4,7 @@ from models.server import *
 from models.utils import client_has_key
 from time import sleep
 from outline_service.outline_getter import OutlineGetter
-from .utils import get_country_emoji, delete_message_after_a_minute, is_convertible_to_int
+from .utils import get_country_emoji, delete_message_after_a_minute, is_convertible_to_int, approved_only
 from telebot import types
 import threading
 
@@ -71,6 +71,7 @@ def server_menu_markup() -> types.InlineKeyboardMarkup:
 def setup_outline_commands(bot: myTeleBot):
 
     @bot.message_handler(commands=['get_key'])
+    @approved_only
     def get_key(message: types.Message):
         bot.logger.info(f'{message.from_user.username} sent {message.text}')
         markup = server_menu_markup()
@@ -78,6 +79,7 @@ def setup_outline_commands(bot: myTeleBot):
 
 
     @bot.message_handler(commands=['server_list'])
+    @approved_only
     def server_list(message: types.Message):
         bot.logger.info(f"Received server_list command from chat ID: {message.chat.id}")
         servers = get_all_servers()

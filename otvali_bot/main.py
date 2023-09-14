@@ -1,6 +1,7 @@
 from telegram_bot.mytelebot import myTeleBot
 from telegram_bot.bot import init_bot, init_message_handlers, init_webhook
 from logger.logger import getLogger
+from telegram_bot.utils import init_util_bot
 from outline_service.outline_getter import OutlineGetter
 from flask import Flask
 from config.bot import *
@@ -18,6 +19,8 @@ if __name__ == "__main__":
     logger.debug(bool(use_webhook))
     bot = myTeleBot(token, logger)
     init_bot(bot)
+
+    init_util_bot(bot)
 
     init_message_handlers(bot)
 
