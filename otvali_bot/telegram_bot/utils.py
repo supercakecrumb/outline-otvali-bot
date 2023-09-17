@@ -1,14 +1,32 @@
+
 from models.client import get_client_by_tg_id
+from .mytelebot import myTeleBot
 import time
 
+botForUtil = None
+def init_util_bot(bot: myTeleBot):
+    global botForUtil
+    botForUtil = bot
+
+  
 def admin_only(func):
     def wrapper(message):
         client = get_client_by_tg_id(message.from_user.id)
         if client is None or (not client.is_admin):
+            botForUtil.send_message(message.chat.id, "You can't do it!")
             return
         return func(message)
-
     return wrapper
+
+def approved_only(func):
+    def wrapper(message):
+        client = get_client_by_tg_id(message.from_user.id)
+        if client is None or (not client.is_approved):
+            botForUtil.send_message(message.chat.id, "Your account haven't been approved! You can't do it")
+            return
+        return func(message)
+    return wrapper
+    
 
 
 def delete_message_after_a_minute(bot, chat_id, message_id, duration):

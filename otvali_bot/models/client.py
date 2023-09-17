@@ -33,6 +33,10 @@ def get_client_by_tg_id(client_tg_id: Integer) -> Client:
     return session.query(Client).filter(Client.tg_id == client_tg_id).first()
 
 
+def get_admins() -> List[Client]:
+    return session.query(Client).filter(Client.is_admin)
+
+
 def save_new_client(tg_id: int, username: str):
     client = Client(tg_id, username)
     client.commit()

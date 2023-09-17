@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, UniqueConstraint, Boolean
+from sqlalchemy import Column, Integer, BigInteger, String, ForeignKey, Table, UniqueConstraint, Boolean
 from models import metadata, engine, base
 from models.modelclass import Model
 from sqlalchemy.orm import relationship
@@ -16,8 +16,8 @@ class Client(base, Model):
     __tablename__ = 'client'
 
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tg_id = Column(Integer)
+    id = Column(BigInteger, primary_key=True)
+    tg_id = Column(BigInteger)
     username = Column(String)
     is_approved = Column(Boolean)
     is_declined = Column(Boolean)
@@ -40,7 +40,7 @@ class Client(base, Model):
 class Server(base, Model):
     __tablename__ = 'server'
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True)
     country = Column(String, unique=True)
     city = Column(String, unique=True)
     num_users = Column(Integer)

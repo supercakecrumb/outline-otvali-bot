@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Table, UniqueConstraint, create_engine
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, Boolean, Table, UniqueConstraint, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -8,8 +8,8 @@ Base = declarative_base()
 client_server_association = Table(
     'client_server', 
     Base.metadata,
-    Column('client_id', Integer, ForeignKey('client.id'), primary_key=True),
-    Column('server_id', Integer, ForeignKey('server.id'), primary_key=True),
+    Column('client_id', BigInteger, ForeignKey('client.id'), primary_key=True),
+    Column('server_id', BigInteger, ForeignKey('server.id'), primary_key=True),
     Column('outline_id', String),
     UniqueConstraint('client_id', 'server_id', name='uix_1')
 )
@@ -18,8 +18,8 @@ client_server_association = Table(
 class Client(Base):
     __tablename__ = 'client'
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tg_id = Column(Integer, unique=True)  # Adding unique constraint
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    tg_id = Column(BigInteger, unique=True)  # Adding unique constraint
     username = Column(String)
     is_approved = Column(Boolean)
     is_declined = Column(Boolean)
@@ -39,7 +39,7 @@ class Client(Base):
 class Server(Base):
     __tablename__ = 'server'
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
     country = Column(String, unique=True)
     city = Column(String, unique=True)
     num_users = Column(Integer)

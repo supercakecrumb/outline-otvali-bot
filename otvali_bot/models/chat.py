@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, BigInteger, String
 from models import base, session, metadata, engine
 from models.modelclass import Model
 import telebot
@@ -6,11 +6,11 @@ import telebot
 class Chat(base, Model):
     __tablename__ = 'chat'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True)
     chat_id = Column(Integer, unique=True, nullable=False)
     is_person = Column(Boolean, nullable=False)
     chat_title = Column(String)
-    tg_id = Column(Integer, unique=True)
+    tg_id = Column(BigInteger, unique=True)
     tg_username = Column(String)
     
 
