@@ -1,9 +1,15 @@
-# otvali-bot
+# outline-otvali-bot
+
+Bot for sharing outline proxy with other people.
+
+> I will give you freedom, but I can't give you bread
+
+## Getting started
+
+1. Create outline server with outline https://getoutline.org/get-started.
+    > You won't be able to control server using outline manager
+
+2. Obtain outline keys
 
 ## Deployment
 
-1. копируем на сервер docker-compose.yaml `scp -i ~/.ssh/yc /Users/val-kiel/Personal/frankfurt/vpn-otvali-bot/docker-compose.yaml val-kiel@158.160.119.15:docker-compose.yaml`
-2. копируем на сервер `scp -i ~/.ssh/yc /Users/val-kiel/Personal/frankfurt/vpn-otvali-bot/deploy.sh val-kiel@158.160.119.15:deploy.sh`
-3. На сервере `sudo ./deploy.sh`. Должно работать.
-
-Вместо этого можно курлить с репы, но это может не прокатить once it's been made private
